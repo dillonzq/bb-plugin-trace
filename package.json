@@ -1,0 +1,54 @@
+{
+  "name": "bb-plugin-trace",
+  "version": "0.1.0",
+  "description": "Inspect the native event history of any BB thread.",
+  "license": "MIT",
+  "author": "Dillon <dillonzq@outlook.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dillonzq/bb-plugin-trace.git"
+  },
+  "homepage": "https://github.com/dillonzq/bb-plugin-trace#readme",
+  "bugs": {
+    "url": "https://github.com/dillonzq/bb-plugin-trace/issues"
+  },
+  "keywords": [
+    "bb",
+    "bb-plugin",
+    "trace",
+    "trajectory"
+  ],
+  "type": "module",
+  "engines": {
+    "bb": ">=0.42",
+    "bbPluginSdk": ">=0.4.47"
+  },
+  "bb": {
+    "name": "Trace",
+    "description": "Inspect the native event history of any BB thread.",
+    "branding": {
+      "icon": "Workflow"
+    },
+    "server": "./server.ts",
+    "app": "./app.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@get-bb/plugin-sdk": "0.4.47",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^29.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.1"
+  }
+}
