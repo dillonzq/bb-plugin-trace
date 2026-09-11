@@ -4,7 +4,7 @@ import {
   useRpc,
   type PluginThreadPanelProps,
 } from "@get-bb/plugin-sdk/app";
-import type { rpcContract, TraceEvent } from "./server";
+import type { rpcContract, TraceEvent, TraceSourceStatus } from "./server";
 
 const PAGE_SIZE = 50;
 type EventCategory = "input" | "model" | "tools" | "other";
@@ -28,18 +28,44 @@ function errorMessage(cause: unknown): string {
   return cause instanceof Error ? cause.message : String(cause);
 }
 
-function stringValue(data: Record<string, unknown>, ...keys: string[]): string | null {
+function stringValue(data: unknown, ...keys: string[]): string | null {
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      const found = stringValue(item, ...keys);
+      if (found !== null) return found;
+    }
+    return null;
+  }
+  if (data === null || typeof data !== "object") return null;
+  const record = data as Record<string, unknown>;
   for (const key of keys) {
-    const value = data[key];
+    const value = record[key];
     if (typeof value === "string" && value.trim() !== "") return value.trim();
+  }
+  for (const value of Object.values(record)) {
+    const found = stringValue(value, ...keys);
+    if (found !== null) return found;
   }
   return null;
 }
 
-function numberValue(data: Record<string, unknown>, ...keys: string[]): number | null {
+function numberValue(data: unknown, ...keys: string[]): number | null {
+  if (Array.isArray(data)) {
+    for (const item of data) {
+      const found = numberValue(item, ...keys);
+      if (found !== null) return found;
+    }
+    return null;
+  }
+  if (data === null || typeof data !== "object") return null;
+  const record = data as Record<string, unknown>;
   for (const key of keys) {
-    const value = data[key];
+    const value = record[key];
     if (typeof value === "number" && Number.isFinite(value)) return value;
+  }
+  for (const value of Object.values(record)) {
+    const found = numberValue(value, ...keys);
+    if (found !== null) return found;
   }
   return null;
 }
@@ -123,10 +149,14 @@ function formatJson(data: Record<string, unknown>): string {
 
 function eventRole(event: TraceEvent): "user" | "assistant" | "tool" | "context" | "other" {
   const role = stringValue(event.data, "role")?.toLowerCase() ?? "";
-  const value = `${event.type} ${role}`.toLowerCase();
-  if (value.includes("tool")) return "tool";
-  if (role === "user" || /input|prompt|request/.test(value)) return "user";
-  if (role === "assistant" || /assistant|model|response|output/.test(value)) return "assistant";
+  if (role === "user") return "user";
+  if (role === "assistant") return "assistant";
+  if (role === "developer" || role === "system") return "context";
+
+  const value = `${event.type} ${stringValue(event.data, "type") ?? ""}`.toLowerCase();
+  if (role.includes("tool") || value.includes("tool") || /function[_/]/.test(value)) return "tool";
+  if (/input|prompt|request/.test(value)) return "user";
+  if (/assistant|model|response|output/.test(value)) return "assistant";
   if (/system|reason|context/.test(value)) return "context";
   return "other";
 }
@@ -491,6 +521,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchRevision, setSearchRevision] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [sourceStatus, setSourceStatus] = useState<TraceSourceStatus>("ok");
   const [loadMoreBlocked, setLoadMoreBlocked] = useState(false);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | EventCategory>("all");
@@ -508,6 +539,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
     setSearchHasMore(false);
     setSelectedEvent(null);
     setError(null);
+    setSourceStatus("ok");
     setLoadMoreBlocked(false);
     setSearchRevision((value) => value + 1);
     try {
@@ -515,6 +547,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
       if (requestId !== requestGeneration.current) return;
       setEvents(result.events);
       setHasMore(result.hasMore);
+      setSourceStatus(result.status);
     } catch (cause) {
       if (requestId !== requestGeneration.current) return;
       setEvents([]);
@@ -550,6 +583,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
         if (requestId !== searchGeneration.current) return;
         setSearchEvents(result.events);
         setSearchHasMore(result.hasMore);
+        setSourceStatus(result.status);
       })
       .catch((cause) => {
         if (requestId !== searchGeneration.current) return;
@@ -580,6 +614,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
         if (requestId !== searchGeneration.current) return;
         setSearchEvents((current) => [...current, ...result.events]);
         setSearchHasMore(result.hasMore);
+        setSourceStatus(result.status);
       } else {
         const result = await rpc.call("listEvents", {
           threadId,
@@ -589,6 +624,7 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
         if (requestId !== requestGeneration.current) return;
         setEvents((current) => [...current, ...result.events]);
         setHasMore(result.hasMore);
+        setSourceStatus(result.status);
       }
     } catch (cause) {
       const current = searchActive ? requestId === searchGeneration.current : requestId === requestGeneration.current;
@@ -615,6 +651,11 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
   const duration = events.length > 1 ? events.at(-1)!.createdAt - events[0]!.createdAt : null;
   const toolCount = events.filter((event) => eventCategory(event) === "tools").length;
   const busy = loading || loadingMore || searchLoading;
+  const sourceMessage = sourceStatus === "unsupported"
+    ? "This Provider is not supported yet, and no generic JSONL trace was found."
+    : sourceStatus === "not_found"
+      ? "No matching source JSONL file was found on the thread's host."
+      : "No events recorded for this thread.";
 
   return (
     <section aria-label="Thread trace" className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground">
@@ -676,8 +717,10 @@ function TracePanel({ threadId }: PluginThreadPanelProps) {
             <p role="alert" className="text-sm text-destructive">Unable to load trace: {error}</p>
             <button type="button" className="rounded border border-border px-2 py-1 text-xs hover:bg-muted" onClick={() => void refresh()}>Retry</button>
           </div>
+        ) : (sourceStatus === "unsupported" || sourceStatus === "not_found") ? (
+          <p className="flex flex-1 items-center justify-center p-4 text-center text-sm text-muted-foreground">{sourceMessage}</p>
         ) : !searchActive && events.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">No events recorded for this thread.</p>
+          <p className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">{sourceMessage}</p>
         ) : filteredEvents.length === 0 && !displayHasMore ? (
           <p className="flex flex-1 items-center justify-center p-4 text-sm text-muted-foreground">{searchActive ? "No events match the current search." : "No events match the current filters."}</p>
         ) : (

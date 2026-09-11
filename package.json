@@ -1,7 +1,7 @@
 {
   "name": "bb-plugin-trace",
   "version": "0.1.0",
-  "description": "Inspect the native event history of any BB thread.",
+  "description": "Inspect the original JSONL trace of any BB thread.",
   "license": "MIT",
   "author": "Dillon <dillonzq@outlook.com>",
   "repository": {
@@ -25,11 +25,12 @@
   },
   "bb": {
     "name": "Trace",
-    "description": "Inspect the native event history of any BB thread.",
+    "description": "Inspect the original JSONL trace of any BB thread.",
     "branding": {
       "icon": "Activity"
     },
     "server": "./server.ts",
+    "host": "./host.ts",
     "app": "./app.tsx"
   },
   "scripts": {

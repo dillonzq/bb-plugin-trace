@@ -1,8 +1,8 @@
 # Trace for BB
 
-Inspect the native event history of the current [BB](https://github.com/get-bb/bb) thread from its side panel.
+Inspect the original agent JSONL trace for the current [BB](https://github.com/get-bb/bb) thread from its side panel.
 
-Trace presents the event stream already recorded by BB as a compact trajectory explorer with:
+Trace presents the raw event stream as a compact trajectory explorer with:
 
 - event, tool, and duration summaries;
 - input, model, and tool timeline lanes;
@@ -11,7 +11,7 @@ Trace presents the event stream already recorded by BB as a compact trajectory e
 - ascending pagination from the first event through the latest event;
 - full-history search across event types and nested payloads.
 
-It reads through BB's Plugin SDK and does not scan local session files, create a separate index, or send trace data elsewhere.
+Trace resolves the provider session through BB's Plugin SDK, then reads and parses the matching local JSONL file on the connected host. It keeps the original records, does not create a separate index, and does not send trace data elsewhere.
 
 ## Install
 

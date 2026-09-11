@@ -24,17 +24,22 @@ describe("Trace RPC", () => {
 
   it("reads a bounded ascending page", async () => {
     const calls: unknown[] = [];
+    const hostIds: string[] = [];
     const { bb, harness } = createFakePluginHost({
       pluginId: "trace",
       sdk: {
+        system: { config: async () => ({ primaryHostId: "host_1" }) },
         threads: {
+          get: async () => ({ providerId: "codex", host: { id: "host_remote" } }) as never,
           events: {
-            list: async (input) => {
-              calls.push(input);
-              return (input.afterSeq === "2" ? [event(3), event(4)] : [event(1), event(2), event(3)]) as never;
-            },
+            list: async () => [event(0, { providerThreadId: "provider_1" })] as never,
           },
         },
+      },
+      experimental_callHostRpc: (call) => {
+        calls.push(call.input);
+        hostIds.push(call.hostId);
+        return { status: "ok", events: [event(1), event(2), event(3)] };
       },
     });
     dispose = harness.lifecycle.dispose;
@@ -46,14 +51,15 @@ describe("Trace RPC", () => {
         limit: 2,
       }),
     ).resolves.toEqual({
+      status: "ok",
       events: [event(1), event(2)],
       hasMore: true,
     });
     expect(calls).toEqual([
       {
         threadId: "th_1",
-        order: "asc",
-        limit: "3",
+        providerId: "codex",
+        providerThreadId: "provider_1",
       },
     ]);
 
@@ -64,15 +70,12 @@ describe("Trace RPC", () => {
         limit: 2,
       }),
     ).resolves.toEqual({
-      events: [event(3), event(4)],
+      status: "ok",
+      events: [event(3)],
       hasMore: false,
     });
-    expect(calls[1]).toEqual({
-      threadId: "th_1",
-      order: "asc",
-      limit: "3",
-      afterSeq: "2",
-    });
+    expect(calls[1]).toEqual(calls[0]);
+    expect(hostIds).toEqual(["host_remote", "host_remote"]);
   });
 
   it("searches nested event payloads across the full history", async () => {
@@ -82,17 +85,19 @@ describe("Trace RPC", () => {
       event(2, { nested: { message: "needle in payload" } }),
       event(3, { text: "other" }),
     ];
+    const discovery = event(0, { providerThreadId: "provider_1" });
     const { bb, harness } = createFakePluginHost({
       pluginId: "trace",
       sdk: {
+        system: { config: async () => ({ primaryHostId: "host_1" }) },
         threads: {
-          events: {
-            list: async (input) => {
-              calls.push(input);
-              return (input.afterSeq === "1" ? rows.slice(1) : rows) as never;
-            },
-          },
+          get: async () => ({ providerId: "codex" }) as never,
+          events: { list: async () => [discovery] as never },
         },
+      },
+      experimental_callHostRpc: (call) => {
+        calls.push(call.input);
+        return { status: "ok", events: rows };
       },
     });
     dispose = harness.lifecycle.dispose;
@@ -104,7 +109,7 @@ describe("Trace RPC", () => {
         query: " NEEDLE ",
         limit: 1,
       }),
-    ).resolves.toEqual({ events: [event(1, rows[0]!.data)], hasMore: true });
+    ).resolves.toEqual({ status: "ok", events: [event(1, rows[0]!.data)], hasMore: true });
 
     await expect(
       harness.behavior.callRpc("searchEvents", {
@@ -113,12 +118,32 @@ describe("Trace RPC", () => {
         afterSeq: 1,
         limit: 1,
       }),
-    ).resolves.toEqual({ events: [event(2, rows[1]!.data)], hasMore: false });
+    ).resolves.toEqual({ status: "ok", events: [event(2, rows[1]!.data)], hasMore: false });
 
     expect(calls).toEqual([
-      { threadId: "th_1", order: "asc", limit: "100" },
-      { threadId: "th_1", order: "asc", limit: "100", afterSeq: "1" },
+      { threadId: "th_1", providerId: "codex", providerThreadId: "provider_1" },
+      { threadId: "th_1", providerId: "codex", providerThreadId: "provider_1" },
     ]);
+  });
+
+  it("reports an unsupported provider instead of returning a silent empty trace", async () => {
+    const { bb, harness } = createFakePluginHost({
+      pluginId: "trace",
+      sdk: {
+        system: { config: async () => ({ primaryHostId: "host_1" }) },
+        threads: {
+          get: async () => ({ providerId: "gemini" }) as never,
+          events: { list: async () => [event(0, { providerThreadId: "provider_1" })] as never },
+        },
+      },
+      experimental_callHostRpc: async () => ({ status: "unsupported", events: [] }),
+    });
+    dispose = harness.lifecycle.dispose;
+    await plugin(bb);
+
+    await expect(
+      harness.behavior.callRpc("listEvents", { threadId: "th_1", limit: 2 }),
+    ).resolves.toEqual({ status: "unsupported", events: [], hasMore: false });
   });
 
   it("validates the page before touching the SDK", async () => {

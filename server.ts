@@ -1,26 +1,16 @@
-import { defineRpcContract, type BbPluginApi } from "@get-bb/plugin-sdk";
+import { defineRpcContract, type BbPluginApi, type ExperimentalHostClient } from "@get-bb/plugin-sdk";
 import { z } from "zod";
+import { traceHostContract } from "./src/host-contract";
+import { searchableText } from "./src/raw-jsonl";
+import {
+  traceEventSchema,
+  traceSourceStatusSchema,
+  type TraceEvent,
+  type TraceSourceStatus,
+} from "./src/trace-event";
 
 const DEFAULT_PAGE_SIZE = 50;
 const MAX_PAGE_SIZE = 100;
-const SEARCH_SCAN_PAGE_SIZE = 100;
-
-const scopeSchema = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("thread") }).strict(),
-  z.object({ kind: z.literal("turn"), turnId: z.string() }).strict(),
-]);
-
-const traceEventSchema = z
-  .object({
-    id: z.string(),
-    scope: scopeSchema,
-    threadId: z.string(),
-    seq: z.number().int().nonnegative(),
-    createdAt: z.number().finite(),
-    type: z.string(),
-    data: z.record(z.string(), z.unknown()),
-  })
-  .strict();
 
 const listEventsInputSchema = z
   .object({
@@ -44,6 +34,7 @@ export const rpcContract = defineRpcContract({
     input: listEventsInputSchema,
     output: z
       .object({
+        status: traceSourceStatusSchema,
         events: z.array(traceEventSchema),
         hasMore: z.boolean(),
       })
@@ -53,6 +44,7 @@ export const rpcContract = defineRpcContract({
     input: searchEventsInputSchema,
     output: z
       .object({
+        status: traceSourceStatusSchema,
         events: z.array(traceEventSchema),
         hasMore: z.boolean(),
       })
@@ -60,78 +52,95 @@ export const rpcContract = defineRpcContract({
   },
 });
 
-export type TraceEvent = z.infer<typeof traceEventSchema>;
-type SdkEventRow = Awaited<
-  ReturnType<BbPluginApi["sdk"]["threads"]["events"]["list"]>
->[number];
+export type { TraceEvent, TraceSourceStatus } from "./src/trace-event";
 
-function toTraceEvent(row: SdkEventRow): TraceEvent {
-  return {
-    id: row.id,
-    scope:
-      row.scope.kind === "turn"
-        ? { kind: "turn", turnId: row.scope.turnId }
-        : { kind: "thread" },
-    threadId: row.threadId,
-    seq: row.seq,
-    createdAt: row.createdAt,
-    type: row.type,
-    data: row.data as Record<string, unknown>,
-  };
+function providerThreadId(value: unknown, depth = 0): string | null {
+  if (depth > 4 || value === null || typeof value !== "object") return null;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = providerThreadId(item, depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  const record = value as Record<string, unknown>;
+  if (typeof record.providerThreadId === "string" && record.providerThreadId.trim() !== "") {
+    return record.providerThreadId;
+  }
+  for (const child of Object.values(record)) {
+    const found = providerThreadId(child, depth + 1);
+    if (found) return found;
+  }
+  return null;
 }
 
-function searchableText(row: SdkEventRow): string {
-  try {
-    return JSON.stringify(row).toLowerCase();
-  } catch {
-    return `${row.id} ${row.type}`.toLowerCase();
+async function hostId(bb: BbPluginApi): Promise<string> {
+  const config = (await bb.sdk.system.config()) as unknown as { primaryHostId?: unknown };
+  if (typeof config.primaryHostId === "string" && config.primaryHostId.length > 0) {
+    return config.primaryHostId;
   }
+  const hosts = await bb.sdk.hosts.list();
+  const host = hosts.find((candidate) => candidate.status === "connected") ?? hosts[0];
+  if (!host) throw new Error("No connected host available for raw trace reading");
+  return host.id;
+}
+
+async function rawEventsForThread(
+  bb: BbPluginApi,
+  traceHost: ExperimentalHostClient<typeof traceHostContract>,
+  threadId: string,
+): Promise<{ status: TraceSourceStatus; events: TraceEvent[] }> {
+  const [thread, rows] = await Promise.all([
+    bb.sdk.threads.get({ include: "environment,host", threadId }),
+    bb.sdk.threads.events.list({ threadId, order: "asc", limit: "100" }),
+  ]);
+  const threadLocation = thread as typeof thread & {
+    environment?: { hostId: string } | null;
+    host?: { id: string } | null;
+  };
+  const providerId = threadLocation.providerId;
+  const targetHostId =
+    threadLocation.host?.id ??
+    threadLocation.environment?.hostId ??
+    (await hostId(bb));
+  const providerIdFromEvents = rows
+    .map((row) => providerThreadId(row.data))
+    .find((value): value is string => value !== null) ?? null;
+  if (providerIdFromEvents === null) {
+    return { status: "unsupported", events: [] };
+  }
+  return traceHost.call(
+    "readEvents",
+    { threadId, providerId, providerThreadId: providerIdFromEvents },
+    { hostId: targetHostId },
+  );
+}
+
+function pageEvents(
+  source: { status: TraceSourceStatus; events: TraceEvent[] },
+  afterSeq: number | undefined,
+  limit: number,
+): { status: TraceSourceStatus; events: TraceEvent[]; hasMore: boolean } {
+  const { events } = source;
+  const eligible = afterSeq === undefined ? events : events.filter((event) => event.seq > afterSeq);
+  return { status: source.status, events: eligible.slice(0, limit), hasMore: eligible.length > limit };
 }
 
 export default function plugin(bb: BbPluginApi): void {
+  const traceHost = bb.hosts.experimental_client({ contract: traceHostContract });
+
   bb.rpc.register(rpcContract, {
     async listEvents({ threadId, afterSeq, limit }) {
-      const rows = await bb.sdk.threads.events.list({
-        threadId,
-        order: "asc",
-        limit: String(limit + 1),
-        ...(afterSeq === undefined ? {} : { afterSeq: String(afterSeq) }),
-      });
-      const hasMore = rows.length > limit;
-      return {
-        events: rows.slice(0, limit).map(toTraceEvent),
-        hasMore,
-      };
+      return pageEvents(await rawEventsForThread(bb, traceHost, threadId), afterSeq, limit);
     },
     async searchEvents({ threadId, query, afterSeq, limit }) {
       const needle = query.toLowerCase();
-      const matches: TraceEvent[] = [];
-      let cursor = afterSeq;
-      let hasMore = false;
-
-      for (;;) {
-        const rows = await bb.sdk.threads.events.list({
-          threadId,
-          order: "asc",
-          limit: String(SEARCH_SCAN_PAGE_SIZE),
-          ...(cursor === undefined ? {} : { afterSeq: String(cursor) }),
-        });
-
-        for (const row of rows) {
-          cursor = row.seq;
-          if (!searchableText(row).includes(needle)) continue;
-          if (matches.length < limit) {
-            matches.push(toTraceEvent(row));
-          } else {
-            hasMore = true;
-            break;
-          }
-        }
-
-        if (hasMore || rows.length < SEARCH_SCAN_PAGE_SIZE) break;
-      }
-
-      return { events: matches, hasMore };
+      const source = await rawEventsForThread(bb, traceHost, threadId);
+      return pageEvents(
+        { ...source, events: source.events.filter((event) => searchableText(event).includes(needle)) },
+        afterSeq,
+        limit,
+      );
     },
   });
 }

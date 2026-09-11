@@ -1,12 +1,12 @@
 ## What you get
 
-Open **Trace** from any thread's side panel to inspect the native event history BB recorded for that conversation. A compact ledger shows event sequence, category, summary, and timestamp, while input, model, and tool lanes provide a quick visual map of the trajectory.
+Open **Trace** from any thread's side panel to inspect the original agent JSONL trace for that conversation. A compact ledger shows event sequence, category, summary, and timestamp, while input, model, and tool lanes provide a quick visual map of the trajectory.
 
 Search event types and nested payloads across the full thread, filter by category, expand an event to inspect its formatted JSON, or load later pages without leaving the thread.
 
 ## How it works
 
-Trace reads the selected thread through BB's Plugin SDK. It does not scan agent session directories, maintain a separate database, or upload event data. The native BB event stream remains the source of truth.
+Trace uses BB's Plugin SDK only to resolve the provider session, then reads and parses its matching local JSONL file through the connected host. It keeps the original records, does not maintain a separate database, and does not upload event data.
 
 ## Requirements
 

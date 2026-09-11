@@ -83,6 +83,22 @@ describe("Trace panel", () => {
     expect(slot.getByLabelText("Trajectory timeline")).toBeTruthy();
   });
 
+  it("uses nested raw message roles before event type heuristics", async () => {
+    const nestedUser = {
+      ...row(1, "th_nested_role"),
+      type: "response_item/message",
+      data: { payload: { type: "message", role: "user", content: [{ type: "text", text: "hello" }] } },
+    };
+    const slot = renderSlot(
+      panel,
+      { threadId: "th_nested_role", params: null },
+      { rpc: { listEvents: () => ({ events: [nestedUser], hasMore: false }) } },
+    );
+
+    await slot.findByText("response_item/message");
+    expect(slot.getByText("USER")).toBeTruthy();
+  });
+
   it("keeps pagination available when a category hides the current page", async () => {
     const calls: Array<Record<string, unknown>> = [];
     const slot = renderSlot(
