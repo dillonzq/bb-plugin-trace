@@ -27,7 +27,7 @@
     "name": "Trace",
     "description": "Inspect the native event history of any BB thread.",
     "branding": {
-      "icon": "Workflow"
+      "icon": "Activity"
     },
     "server": "./server.ts",
     "app": "./app.tsx"

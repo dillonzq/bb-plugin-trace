@@ -8,7 +8,8 @@ Trace presents the event stream already recorded by BB as a compact trajectory e
 - input, model, and tool timeline lanes;
 - event-category filters and payload search;
 - expandable raw JSON payloads;
-- paginated access to earlier events.
+- ascending pagination from the first event through the latest event;
+- full-history search across event types and nested payloads.
 
 It reads through BB's Plugin SDK and does not scan local session files, create a separate index, or send trace data elsewhere.
 
