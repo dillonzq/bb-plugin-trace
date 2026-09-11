@@ -99,6 +99,28 @@ describe("Trace panel", () => {
     expect(slot.getByText("USER")).toBeTruthy();
   });
 
+  it("shows pi bridge usage in Timing and hides empty fields", async () => {
+    const piAssistant = {
+      ...row(1, "th_pi_timing"),
+      type: "message",
+      data: { message: { role: "assistant", content: [{ type: "text", text: "hi" }], model: "glm-5.3-flash", usage: { input: 1234, output: 56 } } },
+    };
+    const slot = renderSlot(
+      panel,
+      { threadId: "th_pi_timing", params: null },
+      { rpc: { listEvents: () => ({ events: [piAssistant], hasMore: false }) } },
+    );
+
+    await slot.findByText("message");
+    fireEvent.click(slot.getByText("message"));
+    fireEvent.click(await slot.findByText("Timing"));
+    const inspector = await slot.findByLabelText("Selected event inspector");
+    expect(inspector.textContent).toContain("glm-5.3-flash");
+    expect(inspector.textContent).toContain("1,234");
+    expect(inspector.textContent).toContain("56");
+    expect(inspector.textContent).not.toContain("—");
+  });
+
   it("keeps pagination available when a category hides the current page", async () => {
     const calls: Array<Record<string, unknown>> = [];
     const slot = renderSlot(

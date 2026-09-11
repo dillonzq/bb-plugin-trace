@@ -13,6 +13,7 @@ const ROOTS: Root[] = [
   { source: "dsh", path: join(homedir(), ".dsh", "sessions") },
   { source: "claude", path: join(homedir(), ".claude", "projects") },
   { source: "pi", path: join(homedir(), ".pi", "agent", "sessions") },
+  { source: "pi", path: join(homedir(), ".bb", "pi-bridge-sessions") },
   { source: "omp", path: join(homedir(), ".omp", "agent", "sessions") },
   { source: "codex", path: join(homedir(), ".codex", "archived_sessions") },
   { source: "codex", path: join(homedir(), ".codex", "pi-subagents-cli", "sessions") },
@@ -22,6 +23,9 @@ const ROOTS: Root[] = [
 const MAX_DISCOVERED_FILES = 4_096;
 const MAX_FALLBACK_FILES = 256;
 const PREFIX_BYTES = 64 * 1024;
+// Host RPC output is capped at 8 MiB; keep parsed traces comfortably below it.
+const MAX_FIELD_CHARS = 2_000;
+const MAX_OUTPUT_BYTES = 5 * 1024 * 1024;
 type HostReadEventsResult = {
   status: TraceSourceStatus;
   events: ReturnType<typeof parseJsonl>;
@@ -81,6 +85,34 @@ async function containsInPrefix(path: string, needle: string): Promise<boolean> 
   }
 }
 
+// ponytail: truncate long strings + drop oldest events past a byte budget; a real
+// pagination contract in the host RPC is the upgrade path if tails matter.
+function compact(value: unknown): unknown {
+  if (typeof value === "string") {
+    return value.length > MAX_FIELD_CHARS
+      ? `${value.slice(0, MAX_FIELD_CHARS)}…(+${value.length - MAX_FIELD_CHARS} chars)`
+      : value;
+  }
+  if (Array.isArray(value)) return value.map(compact);
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, compact(child)]));
+  }
+  return value;
+}
+
+function compactEvents(events: ReturnType<typeof parseJsonl>): ReturnType<typeof parseJsonl> {
+  const kept: typeof events = [];
+  let budget = MAX_OUTPUT_BYTES;
+  for (const event of events) {
+    const candidate = { ...event, data: compact(event.data) as Record<string, unknown> };
+    const size = Buffer.byteLength(JSON.stringify(candidate));
+    if (size > budget) break;
+    budget -= size;
+    kept.push(candidate);
+  }
+  return kept;
+}
+
 async function findSessionFile(
   providerId: string | null,
   providerThreadId: string,
@@ -125,10 +157,12 @@ export default experimental_defineHostEntry({
         ]);
         return {
           status: source.known ? "ok" : "generic",
-          events: parseJsonl(content, {
-            threadId: input.threadId,
-            fallbackTimestamp: metadata.mtimeMs,
-          }),
+          events: compactEvents(
+            parseJsonl(content, {
+              threadId: input.threadId,
+              fallbackTimestamp: metadata.mtimeMs,
+            }),
+          ),
         };
       } catch {
         return { status: source.known ? "not_found" : "unsupported", events: [] };

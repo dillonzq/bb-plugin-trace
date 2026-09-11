@@ -216,11 +216,12 @@ function eventTokens(event: TraceEvent, kind: "input" | "output"): number | null
     event.data,
     kind === "input" ? "inputTokens" : "outputTokens",
     kind === "input" ? "input_tokens" : "output_tokens",
+    kind, // ponytail: pi bridge uses usage.input/usage.output; key-order makes the broad key safe
   );
 }
 
 function eventModel(event: TraceEvent): string {
-  return stringValue(event.data, "model", "modelName", "model_name") ?? "—";
+  return stringValue(event.data, "model", "modelName", "model_name", "modelId", "model_id") ?? "—";
 }
 
 function eventDirectory(event: TraceEvent): string {
@@ -387,7 +388,7 @@ function SessionInspector({ event, onClose }: { event: TraceEvent; onClose: () =
   const duration = eventDuration(event);
 
   return (
-    <aside className="flex h-full min-h-0 flex-col border-l border-border bg-popover text-popover-foreground shadow-xl" aria-label="Selected event inspector">
+    <aside className="flex h-full min-h-0 flex-col border-l border-border bg-popover text-popover-foreground shadow-xl backdrop-blur-2xl" aria-label="Selected event inspector">
       <div className="flex h-10 shrink-0 items-center gap-2 border-b border-border px-3">
         <span className={`text-[10px] font-semibold ${eventTone(event)}`}>{eventKind(event)}</span>
         <span className="min-w-0 flex-1 truncate font-mono text-[10px] text-muted-foreground">{event.type} · #{event.seq}</span>
@@ -418,11 +419,11 @@ function SessionInspector({ event, onClose }: { event: TraceEvent; onClose: () =
         {tab === "timing" ? (
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[11px]">
             <dt className="text-muted-foreground">Timestamp</dt><dd className="text-foreground">{formatDateTime(event.createdAt)}</dd>
-            <dt className="text-muted-foreground">Duration</dt><dd className="text-foreground">{formatDuration(duration)}</dd>
-            <dt className="text-muted-foreground">Input tokens</dt><dd className="text-foreground">{eventTokens(event, "input") ?? "—"}</dd>
-            <dt className="text-muted-foreground">Output tokens</dt><dd className="text-foreground">{eventTokens(event, "output") ?? "—"}</dd>
-            <dt className="text-muted-foreground">Model</dt><dd className="break-all font-mono text-foreground">{eventModel(event)}</dd>
-            <dt className="text-muted-foreground">Working directory</dt><dd className="break-all font-mono text-foreground">{eventDirectory(event)}</dd>
+            {duration !== null ? <><dt className="text-muted-foreground">Duration</dt><dd className="text-foreground">{formatDuration(duration)}</dd></> : null}
+            {eventTokens(event, "input") !== null ? <><dt className="text-muted-foreground">Input tokens</dt><dd className="text-foreground">{formatCount(eventTokens(event, "input")!)}</dd></> : null}
+            {eventTokens(event, "output") !== null ? <><dt className="text-muted-foreground">Output tokens</dt><dd className="text-foreground">{formatCount(eventTokens(event, "output")!)}</dd></> : null}
+            {eventModel(event) !== "—" ? <><dt className="text-muted-foreground">Model</dt><dd className="break-all font-mono text-foreground">{eventModel(event)}</dd></> : null}
+            {eventDirectory(event) !== "—" ? <><dt className="text-muted-foreground">Working directory</dt><dd className="break-all font-mono text-foreground">{eventDirectory(event)}</dd></> : null}
           </dl>
         ) : null}
       </div>
@@ -464,8 +465,8 @@ function EventLedger({
         if (canLoadMore && hasMore && !loading && target.scrollHeight - target.scrollTop - target.clientHeight <= 240) onLoadMore();
       }}
     >
-      <div className="sticky top-0 z-10 grid h-5 grid-cols-[5.5rem_minmax(0,1fr)_auto] items-center border-b border-border bg-muted/40 px-2 text-[9px] uppercase tracking-wide text-muted-foreground">
-        <div>Role</div><div>Event</div><div>Time</div>
+      <div className="sticky top-0 z-10 grid h-5 grid-cols-[8rem_minmax(0,1fr)_auto] items-center border-b border-border bg-muted backdrop-blur-md px-2 text-[9px] uppercase tracking-wide text-muted-foreground">
+        <div className="flex items-center gap-1.5"><span className="w-7 shrink-0" />Role</div><div>Event</div><div>Time</div>
       </div>
       {events.length === 0 ? (
         <div className="flex min-h-40 items-center justify-center text-sm text-muted-foreground">No events match the current filters.</div>
@@ -479,7 +480,7 @@ function EventLedger({
               {turnStart ? <div className="flex h-5 items-center border-t-2 border-border bg-muted/20 px-2 text-[9px] uppercase tracking-wide text-muted-foreground">Turn {turn}</div> : null}
               <button
                 type="button"
-                className={`group grid min-h-[34px] w-full grid-cols-[5.5rem_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/80 px-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring ${selectedId === event.id ? "bg-primary/10" : "hover:bg-muted/50"}`}
+                className={`group grid min-h-[34px] w-full grid-cols-[8rem_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/80 px-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring ${selectedId === event.id ? "bg-primary/10" : "hover:bg-muted/50"}`}
                 onClick={() => onSelect(event)}
                 aria-pressed={selectedId === event.id}
               >
