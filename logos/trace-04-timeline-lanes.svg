@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Trace — Timeline Lanes</title>
+  <desc id="desc">Three event lanes connected into one trajectory.</desc>
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+  <path d="M52 72h153M52 128h153M52 184h153" fill="none" stroke="#334155" stroke-width="8" stroke-linecap="round"/>
+  <path d="M53 72h45v56h48v56h59" fill="none" stroke="#F8FAFC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="53" cy="72" r="12" fill="#22D3EE"/>
+  <circle cx="98" cy="128" r="12" fill="#A78BFA"/>
+  <circle cx="146" cy="184" r="12" fill="#FBBF24"/>
+  <circle cx="205" cy="184" r="12" fill="#34D399"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Trace — Signal Trail</title>
+  <desc id="desc">A colored event path with four trace nodes.</desc>
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+  <path d="M53 169C78 169 78 111 107 111s29 71 54 71 20-107 43-107" fill="none" stroke="#67E8F9" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m191 75 14 1-8 12" fill="none" stroke="#67E8F9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="53" cy="169" r="12" fill="#22D3EE"/>
+  <circle cx="107" cy="111" r="12" fill="#A78BFA"/>
+  <circle cx="161" cy="182" r="12" fill="#FBBF24"/>
+  <circle cx="204" cy="75" r="12" fill="#F8FAFC"/>
+</svg>

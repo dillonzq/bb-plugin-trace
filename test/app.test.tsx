@@ -99,6 +99,34 @@ describe("Trace panel", () => {
     expect(slot.getByText("USER")).toBeTruthy();
   });
 
+  it("shortens long non-role event types to fit the role column", async () => {
+    const slot = renderSlot(
+      panel,
+      { threadId: "th_long_kind", params: null },
+      {
+        rpc: {
+          listEvents: () => ({
+            events: [
+              { ...row(1, "th_long_kind"), type: "token_usage_record" },
+              { ...row(2, "th_long_kind"), type: "event_msg/item_completed" },
+              { ...row(3, "th_long_kind"), type: "event_msg/token_count" },
+              { ...row(4, "th_long_kind"), type: "event/4" },
+              { ...row(5, "th_long_kind"), type: "anextremelylongsinglewordtype" },
+            ],
+            hasMore: false,
+          }),
+        },
+      },
+    );
+
+    await slot.findByText("token_usage_record");
+    expect(slot.getByText("TOKEN")).toBeTruthy();
+    expect(slot.getByText("ITEM")).toBeTruthy();
+    expect(slot.getByText("TOKEN_COUNT")).toBeTruthy();
+    expect(slot.getByText("EVENT/4")).toBeTruthy();
+    expect(slot.getByText("ANEXTREMELYL")).toBeTruthy();
+  });
+
   it("shows pi bridge usage in Timing and hides empty fields", async () => {
     const piAssistant = {
       ...row(1, "th_pi_timing"),

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">Trace logo concepts</title>
+  <desc id="desc">Six logo directions for the Trace BB plugin.</desc>
+  <defs>
+    <style>
+      .name { font: 700 20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+      .note { font: 400 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; }
+      .number { font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 2px; fill: #0891b2; }
+    </style>
+    <symbol id="signal" viewBox="0 0 256 256">
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <path d="M53 169C78 169 78 111 107 111s29 71 54 71 20-107 43-107" fill="none" stroke="#67E8F9" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="m191 75 14 1-8 12" fill="none" stroke="#67E8F9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="53" cy="169" r="12" fill="#22D3EE"/><circle cx="107" cy="111" r="12" fill="#A78BFA"/><circle cx="161" cy="182" r="12" fill="#FBBF24"/><circle cx="204" cy="75" r="12" fill="#F8FAFC"/>
+    </symbol>
+    <symbol id="lens" viewBox="0 0 256 256">
+      <defs><clipPath id="board-lens-clip"><circle cx="108" cy="108" r="61"/></clipPath></defs>
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <circle cx="108" cy="108" r="61" fill="#111A30" stroke="#F8FAFC" stroke-width="11"/>
+      <g clip-path="url(#board-lens-clip)">
+        <path d="M46 125c20-42 34-42 49-5s29 37 43 2 23-40 57-36" fill="none" stroke="#67E8F9" stroke-width="10" stroke-linecap="round"/>
+        <circle cx="95" cy="119" r="10" fill="#A78BFA"/><circle cx="138" cy="122" r="10" fill="#FBBF24"/>
+      </g>
+      <path d="m153 153 51 51" fill="none" stroke="#67E8F9" stroke-width="17" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="json" viewBox="0 0 256 256">
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <path d="M87 54H77c-17 0-26 10-26 27v21c0 16-8 24-20 27 12 3 20 11 20 27v21c0 17 9 27 26 27h10M169 54h10c17 0 26 10 26 27v21c0 16 8 24 20 27-12 3-20 11-20 27v21c0 17-9 27-26 27h-10" fill="none" stroke="#67E8F9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M84 130h22l12-30 17 57 13-30h23" fill="none" stroke="#F8FAFC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="106" cy="130" r="8" fill="#A78BFA"/><circle cx="135" cy="157" r="8" fill="#FBBF24"/><circle cx="171" cy="127" r="8" fill="#34D399"/>
+    </symbol>
+    <symbol id="lanes" viewBox="0 0 256 256">
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <path d="M52 72h153M52 128h153M52 184h153" fill="none" stroke="#334155" stroke-width="8" stroke-linecap="round"/>
+      <path d="M53 72h45v56h48v56h59" fill="none" stroke="#F8FAFC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="53" cy="72" r="12" fill="#22D3EE"/><circle cx="98" cy="128" r="12" fill="#A78BFA"/><circle cx="146" cy="184" r="12" fill="#FBBF24"/><circle cx="205" cy="184" r="12" fill="#34D399"/>
+    </symbol>
+    <symbol id="converge" viewBox="0 0 256 256">
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <path d="M53 72h37l39 56M53 128h76M53 184h37l39-56" fill="none" stroke="#67E8F9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M129 128h73" fill="none" stroke="#F8FAFC" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="53" cy="72" r="12" fill="#22D3EE"/><circle cx="53" cy="128" r="12" fill="#A78BFA"/><circle cx="53" cy="184" r="12" fill="#FBBF24"/>
+      <circle cx="129" cy="128" r="24" fill="#111A30" stroke="#F8FAFC" stroke-width="8"/><circle cx="129" cy="128" r="8" fill="#34D399"/>
+      <path d="m194 117 11 11-11 11" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="orbit" viewBox="0 0 256 256">
+      <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+      <path d="M83 82a65 65 0 1 1-10 76" fill="none" stroke="#67E8F9" stroke-width="11" stroke-linecap="round"/>
+      <path d="M83 82 80 61l20 9" fill="none" stroke="#67E8F9" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M173 174a65 65 0 0 1-90-92" fill="none" stroke="#A78BFA" stroke-width="11" stroke-linecap="round" stroke-dasharray="2 19"/>
+      <rect x="93" y="93" width="70" height="70" rx="20" fill="#111A30" stroke="#F8FAFC" stroke-width="9"/><circle cx="128" cy="128" r="12" fill="#FBBF24"/>
+      <circle cx="75" cy="158" r="10" fill="#34D399"/><circle cx="174" cy="82" r="10" fill="#F8FAFC"/>
+    </symbol>
+  </defs>
+
+  <rect width="1200" height="820" rx="32" fill="#F8FAFC"/>
+  <text x="56" y="62" font-size="14" font-weight="700" letter-spacing="4" fill="#0891B2" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">TRACE / BB PLUGIN</text>
+  <text x="56" y="101" font-size="32" font-weight="750" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">Logo directions</text>
+  <text x="1144" y="96" text-anchor="end" font-size="14" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">dark UI · 16px friendly · vector</text>
+
+  <g>
+    <rect x="40" y="130" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#signal" xlink:href="#signal" x="145" y="144" width="140" height="140"/>
+    <text class="number" x="64" y="327">01</text><text class="name" x="64" y="356">Signal Trail</text><text class="note" x="64" y="384">事件流轨迹，最直接</text>
+  </g>
+  <g>
+    <rect x="425" y="130" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#lens" xlink:href="#lens" x="530" y="144" width="140" height="140"/>
+    <text class="number" x="449" y="327">02</text><text class="name" x="449" y="356">Trace Lens</text><text class="note" x="449" y="384">查看与定位原始事件</text>
+  </g>
+  <g>
+    <rect x="810" y="130" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#json" xlink:href="#json" x="915" y="144" width="140" height="140"/>
+    <text class="number" x="834" y="327">03</text><text class="name" x="834" y="356">JSON Pulse</text><text class="note" x="834" y="384">JSONL + 事件脉冲</text>
+  </g>
+  <g>
+    <rect x="40" y="470" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#lanes" xlink:href="#lanes" x="145" y="484" width="140" height="140"/>
+    <text class="number" x="64" y="667">04</text><text class="name" x="64" y="696">Timeline Lanes</text><text class="note" x="64" y="724">Input / Model / Tools 三泳道</text>
+  </g>
+  <g>
+    <rect x="425" y="470" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#converge" xlink:href="#converge" x="530" y="484" width="140" height="140"/>
+    <text class="number" x="449" y="667">05</text><text class="name" x="449" y="696">Converging Events</text><text class="note" x="449" y="724">多路事件汇聚到一个线程</text>
+  </g>
+  <g>
+    <rect x="810" y="470" width="350" height="300" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+    <use href="#orbit" xlink:href="#orbit" x="915" y="484" width="140" height="140"/>
+    <text class="number" x="834" y="667">06</text><text class="name" x="834" y="696">Orbit Loop</text><text class="note" x="834" y="724">循环、历史与上下文</text>
+  </g>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 590" role="img" aria-labelledby="title desc">
+  <title id="title">Trace monochrome BB UI icon concepts</title>
+  <desc id="desc">Six monochrome outline icon directions designed for the BB user interface.</desc>
+  <defs>
+    <style>
+      .card { fill: #171D22; stroke: #2A3239; stroke-width: 1; }
+      .label { font: 600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #F4F4F5; }
+      .note { font: 400 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #98A2AD; }
+      .num { font: 700 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 2px; fill: #98A2AD; }
+      .icon { fill: none; stroke: #F4F4F5; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+    <symbol id="path" viewBox="0 0 24 24">
+      <g class="icon">
+        <path d="M3.5 17.25c2.8 0 2.8-6.75 6.1-6.75 3 0 3.05 5.25 5.7 5.25 2.8 0 2.65-9.25 5.2-9.25"/>
+        <circle cx="3.5" cy="17.25" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="9.6" cy="10.5" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="15.3" cy="15.75" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="20.5" cy="6.5" r="1.25" fill="#F4F4F5" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="lens" viewBox="0 0 24 24">
+      <g class="icon">
+        <circle cx="10" cy="10" r="5.8"/><path d="m14.2 14.2 5.8 5.8"/><path d="M6.7 10.7c1-2.1 1.7-2.1 2.5-.5s1.5 1.8 2.4-.1 1.3-1.9 2.1-1.6"/>
+      </g>
+    </symbol>
+    <symbol id="json" viewBox="0 0 24 24">
+      <g class="icon">
+        <path d="M8 3.5H7c-1.5 0-2.2.9-2.2 2.4v2c0 1.2-.6 2-1.8 2.6 1.2.6 1.8 1.4 1.8 2.6v2c0 1.5.7 2.4 2.2 2.4h1M16 3.5h1c1.5 0 2.2.9 2.2 2.4v2c0 1.2.6 2 1.8 2.6-1.2.6-1.8 1.4-1.8 2.6v2c0 1.5-.7 2.4-2.2 2.4h-1"/><path d="M7.7 11.3h2.4l1.1-3.1 1.7 7 1.1-3.9h2.3"/>
+      </g>
+    </symbol>
+    <symbol id="lanes" viewBox="0 0 24 24">
+      <g class="icon">
+        <g opacity=".35"><path d="M3.5 5.5h17"/><path d="M3.5 12h17"/><path d="M3.5 18.5h17"/></g>
+        <path d="M3.5 5.5h4v6.5H12v6.5h6.5"/>
+        <circle cx="3.5" cy="5.5" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="7.5" cy="12" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="12" cy="18.5" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="18.5" cy="18.5" r="1.25" fill="#F4F4F5" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="converge" viewBox="0 0 24 24">
+      <g class="icon">
+        <path d="M3.5 6h3.7l4.8 6M3.5 12H12M3.5 18h3.7l4.8-6M12 12h8.5"/><circle cx="3.5" cy="6" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="3.5" cy="12" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="3.5" cy="18" r="1.25" fill="#F4F4F5" stroke="none"/><circle cx="12" cy="12" r="2.1"/><path d="m18.5 10 2 2-2 2"/>
+      </g>
+    </symbol>
+    <symbol id="orbit" viewBox="0 0 24 24">
+      <g class="icon">
+        <path d="M7.2 5.2a7.4 7.4 0 1 1-1.4 11.4"/><path d="m7.2 5.2-.1-2.2 2 1.2"/><path d="M16.8 18.8a7.4 7.4 0 0 1-9.6-13.6" stroke-dasharray=".1 2.6"/><circle cx="12" cy="12" r="2.1"/><circle cx="17.3" cy="6.2" r="1.2" fill="#F4F4F5" stroke="none"/><circle cx="6.6" cy="17.5" r="1.2" fill="#F4F4F5" stroke="none"/>
+      </g>
+    </symbol>
+  </defs>
+
+  <rect width="960" height="590" rx="24" fill="#101418"/>
+  <text x="32" y="42" font-size="12" font-weight="700" letter-spacing="3" fill="#98A2AD" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">TRACE / BB UI ICONS</text>
+  <text x="928" y="42" text-anchor="end" font-size="12" fill="#68737E" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">monochrome · outline · 24px</text>
+
+  <g><rect class="card" x="28" y="70" width="286" height="218" rx="16"/><use href="#path" x="129" y="91" width="84" height="84"/><text class="num" x="50" y="206">01</text><text class="label" x="50" y="232">Event path</text><text class="note" x="50" y="257">事件轨迹</text></g>
+  <g><rect class="card" x="337" y="70" width="286" height="218" rx="16"/><use href="#lens" x="438" y="91" width="84" height="84"/><text class="num" x="359" y="206">02</text><text class="label" x="359" y="232">Inspect lens</text><text class="note" x="359" y="257">检索与定位</text></g>
+  <g><rect class="card" x="646" y="70" width="286" height="218" rx="16"/><use href="#json" x="747" y="91" width="84" height="84"/><text class="num" x="668" y="206">03</text><text class="label" x="668" y="232">JSON pulse</text><text class="note" x="668" y="257">JSONL 事件</text></g>
+  <g><rect class="card" x="28" y="316" width="286" height="218" rx="16"/><use href="#lanes" x="129" y="337" width="84" height="84"/><text class="num" x="50" y="452">04</text><text class="label" x="50" y="478">Timeline lanes</text><text class="note" x="50" y="503">三泳道时间线</text></g>
+  <g><rect class="card" x="337" y="316" width="286" height="218" rx="16"/><use href="#converge" x="438" y="337" width="84" height="84"/><text class="num" x="359" y="452">05</text><text class="label" x="359" y="478">Converge</text><text class="note" x="359" y="503">多路事件汇聚</text></g>
+  <g><rect class="card" x="646" y="316" width="286" height="218" rx="16"/><use href="#orbit" x="747" y="337" width="84" height="84"/><text class="num" x="668" y="452">06</text><text class="label" x="668" y="478">Orbit loop</text><text class="note" x="668" y="503">历史与上下文</text></g>
+</svg>

@@ -169,13 +169,21 @@ function eventCategory(event: TraceEvent): EventCategory {
   return "other";
 }
 
+// ponytail: must fit the 9rem Role column (grid-cols below); widen both together
+const KIND_BUDGET = 12;
+
 function eventKind(event: TraceEvent): string {
   const role = eventRole(event);
   if (role === "tool") return "TOOL";
   if (role === "user") return "USER";
   if (role === "assistant") return "ASSISTANT";
   if (role === "context") return "CONTEXT";
-  return event.type.toUpperCase().slice(0, 14);
+  // The raw type already shows in the Event column, so keep the tag inside the column:
+  // full type when it fits, else its last path segment, else that segment's first word.
+  const full = event.type.toUpperCase();
+  const tail = full.length <= KIND_BUDGET ? full : (full.split("/").pop() ?? full);
+  const label = tail.length <= KIND_BUDGET ? tail : (tail.split("_")[0] ?? tail);
+  return label.slice(0, KIND_BUDGET); // deliberate cap: event.type is arbitrary
 }
 
 function eventTone(event: TraceEvent): string {
@@ -465,7 +473,7 @@ function EventLedger({
         if (canLoadMore && hasMore && !loading && target.scrollHeight - target.scrollTop - target.clientHeight <= 240) onLoadMore();
       }}
     >
-      <div className="sticky top-0 z-10 grid h-5 grid-cols-[8rem_minmax(0,1fr)_auto] items-center border-b border-border bg-muted backdrop-blur-md px-2 text-[9px] uppercase tracking-wide text-muted-foreground">
+      <div className="sticky top-0 z-10 grid h-5 grid-cols-[9rem_minmax(0,1fr)_auto] items-center border-b border-border bg-muted backdrop-blur-md px-2 text-[9px] uppercase tracking-wide text-muted-foreground">
         <div className="flex items-center gap-1.5"><span className="w-7 shrink-0" />Role</div><div>Event</div><div>Time</div>
       </div>
       {events.length === 0 ? (
@@ -480,7 +488,7 @@ function EventLedger({
               {turnStart ? <div className="flex h-5 items-center border-t-2 border-border bg-muted/20 px-2 text-[9px] uppercase tracking-wide text-muted-foreground">Turn {turn}</div> : null}
               <button
                 type="button"
-                className={`group grid min-h-[34px] w-full grid-cols-[8rem_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/80 px-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring ${selectedId === event.id ? "bg-primary/10" : "hover:bg-muted/50"}`}
+                className={`group grid min-h-[34px] w-full grid-cols-[9rem_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/80 px-2 text-left transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring ${selectedId === event.id ? "bg-primary/10" : "hover:bg-muted/50"}`}
                 onClick={() => onSelect(event)}
                 aria-pressed={selectedId === event.id}
               >

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Trace — Orbit Loop</title>
+  <desc id="desc">A looping trace orbit around the inspected thread.</desc>
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+  <path d="M83 82a65 65 0 1 1-10 76" fill="none" stroke="#67E8F9" stroke-width="11" stroke-linecap="round"/>
+  <path d="M83 82 80 61l20 9" fill="none" stroke="#67E8F9" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M173 174a65 65 0 0 1-90-92" fill="none" stroke="#A78BFA" stroke-width="11" stroke-linecap="round" stroke-dasharray="2 19"/>
+  <rect x="93" y="93" width="70" height="70" rx="20" fill="#111A30" stroke="#F8FAFC" stroke-width="9"/>
+  <circle cx="128" cy="128" r="12" fill="#FBBF24"/>
+  <circle cx="75" cy="158" r="10" fill="#34D399"/>
+  <circle cx="174" cy="82" r="10" fill="#F8FAFC"/>
+</svg>

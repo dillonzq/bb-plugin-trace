@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-trace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Inspect the original JSONL trace of any BB thread.",
   "license": "MIT",
   "author": "Dillon <dillonzq@outlook.com>",
@@ -27,7 +27,7 @@
     "name": "Trace",
     "description": "Inspect the original JSONL trace of any BB thread.",
     "branding": {
-      "icon": "Activity"
+      "icon": "./logos/trace-branding-waypoints.svg"
     },
     "server": "./server.ts",
     "host": "./host.ts",

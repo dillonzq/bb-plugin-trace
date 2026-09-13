@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Trace — Converging Events</title>
+  <desc id="desc">Three event streams converging on an inspection point.</desc>
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+  <path d="M53 72h37l39 56M53 128h76M53 184h37l39-56" fill="none" stroke="#67E8F9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M129 128h73" fill="none" stroke="#F8FAFC" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="53" cy="72" r="12" fill="#22D3EE"/>
+  <circle cx="53" cy="128" r="12" fill="#A78BFA"/>
+  <circle cx="53" cy="184" r="12" fill="#FBBF24"/>
+  <circle cx="129" cy="128" r="24" fill="#111A30" stroke="#F8FAFC" stroke-width="8"/>
+  <circle cx="129" cy="128" r="8" fill="#34D399"/>
+  <path d="m194 117 11 11-11 11" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

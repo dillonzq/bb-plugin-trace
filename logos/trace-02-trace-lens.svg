@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Trace — Trace Lens</title>
+  <desc id="desc">A magnifying glass inspecting an event path.</desc>
+  <defs>
+    <clipPath id="lens-clip"><circle cx="108" cy="108" r="61"/></clipPath>
+  </defs>
+  <rect x="16" y="16" width="224" height="224" rx="56" fill="#0B1020"/>
+  <circle cx="108" cy="108" r="61" fill="#111A30" stroke="#F8FAFC" stroke-width="11"/>
+  <g clip-path="url(#lens-clip)">
+    <path d="M46 125c20-42 34-42 49-5s29 37 43 2 23-40 57-36" fill="none" stroke="#67E8F9" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="95" cy="119" r="10" fill="#A78BFA"/>
+    <circle cx="138" cy="122" r="10" fill="#FBBF24"/>
+  </g>
+  <path d="m153 153 51 51" fill="none" stroke="#67E8F9" stroke-width="17" stroke-linecap="round"/>
+</svg>

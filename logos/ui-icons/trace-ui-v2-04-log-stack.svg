@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">Trace log stack</title>
+  <rect x="6" y="3.5" width="14" height="4.5" rx="1.4" opacity=".35"/>
+  <rect x="6" y="9.75" width="14" height="4.5" rx="1.4"/>
+  <rect x="6" y="16" width="14" height="4.5" rx="1.4" opacity=".35"/>
+  <path d="M8.5 5.75h1.7M12 5.75h5M8.5 12h2.3M12.5 12h4.5M8.5 18.25h1.7M12 18.25h5"/>
+  <path d="M4 7v10M4 7l1.2 1.2M4 17l1.2-1.2" opacity=".65"/>
+</svg>

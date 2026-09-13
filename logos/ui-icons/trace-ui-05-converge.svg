@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">Trace converging events</title>
+  <path d="M3.5 6h3.7l4.8 6M3.5 12H12M3.5 18h3.7l4.8-6M12 12h8.5"/>
+  <circle cx="3.5" cy="6" r="1.25" fill="currentColor" stroke="none"/>
+  <circle cx="3.5" cy="12" r="1.25" fill="currentColor" stroke="none"/>
+  <circle cx="3.5" cy="18" r="1.25" fill="currentColor" stroke="none"/>
+  <circle cx="12" cy="12" r="2.1"/>
+  <path d="m18.5 10 2 2-2 2"/>
+</svg>
